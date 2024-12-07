@@ -1,32 +1,42 @@
 import {Button, Typography} from "@mui/material";
+import {useNavigate, useParams} from "react-router-dom";
 import {useFormik} from "formik";
-import classes from "./NewArticle.module.css";
-import {useContext} from "react";
+import classes from "../new-article/NewArticle.module.css";
+import {useContext, useEffect} from "react";
 import {ArticleContext} from "../../../contexts/ArticleContext.jsx";
-import {useNavigate} from "react-router-dom";
 
-export default function NewArticle() {
-    const { handleAddArticle } = useContext(ArticleContext);
+export default function EditArticle() {
+    const {articleId} = useParams();
+    const { articles, handleEditArticle } = useContext(ArticleContext);
     const navigate = useNavigate();
-    const initialValues = {
-        title: '',
-        description: ''
-    };
 
-    const handleFormSubmit = (values) => {
-        console.log(values);
-        handleAddArticle(values);
+    const handleEdit = (values) => {
+        handleEditArticle(articleId, values);
         navigate('/articles');
     }
 
     const articleForm = useFormik({
-        initialValues: initialValues,
-        onSubmit: handleFormSubmit
-    });
+        initialValues: {
+            title: '',
+            description: ''
+        },
+        onSubmit: handleEdit
+    })
+
+    useEffect(() => {
+        const articleObj = articles.find((article) => article.id === parseInt(articleId));
+        if (articleObj) {
+            articleForm.setValues({
+                title: articleObj.title,
+                description: articleObj.description
+            })
+        }
+    }, [articleId]);
+
 
     return (
         <>
-            <Typography variant="h3">New Article</Typography>
+            <Typography variant="h3" className="text-center">Article Id: {articleId}</Typography>
             <form onSubmit={articleForm.handleSubmit} className={classes.formContainer}>
                 <div className="form-group my-2">
                     <input
@@ -53,6 +63,5 @@ export default function NewArticle() {
                 </div>
             </form>
         </>
-
     )
 }

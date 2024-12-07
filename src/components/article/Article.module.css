@@ -3,4 +3,6 @@
     border-radius: 12px;
     padding: 10px;
     margin: 10px;
+    display: flex;
+    gap: 20px;
 }
